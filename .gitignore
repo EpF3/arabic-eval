@@ -1,9 +1,17 @@
-# Ignore virtual environments
-venv/
-
-# Ignore Python cache files
+# Python cache files
 __pycache__/
 *.pyc
 
-# Ignore environment files
-.env
+# Virtual environment
+env/
+.venv/
+
+# Test coverage
+.coverage
+*.cover
+
+# VS Code specific files
+.vscode/
+
+# Logs
+*.log
