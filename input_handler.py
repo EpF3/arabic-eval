@@ -1,8 +1,9 @@
 '''The core input processing unit'''
 import re
 from typing import Dict
+from settings import logger
 
-def process_input(arabic_input: Dict) -> Dict:
+def process_input(arabic_input: Dict) -> Dict[str, str]:
     """
     Process the input dictionary containing 'prompt' and 'reply'.
 
@@ -25,18 +26,21 @@ def process_input(arabic_input: Dict) -> Dict:
 
     # Step 3: Non-Empty Check
     if not isinstance(prompt, str):
-        raise TypeError(f"Prompt should be a string, not {type(prompt)}")
+        raise TypeError(f"Prompt must be a string, not {type(prompt)}")
     if not isinstance(reply, str):
-        raise TypeError(f"Reply should be a string, not {type(reply)}")
+        raise TypeError(f"Reply must be a string, not {type(reply)}")
     if not prompt.strip():
         raise ValueError("Prompt cannot be empty.")
     if not reply.strip():
         raise ValueError("Reply cannot be empty.")
 
     # Step 4: Arabic Text Check
-    invalid_chars = re.findall(r'[^\\u0600-\\u06FF\\s،؛؟.!(){}[\\]\'\"0-9]', reply)
+    invalid_chars = re.findall(r'[^\u0600-\u06FF\s،؛؟.!(){}\[\]\'\"0-9]', reply)
     if invalid_chars:
-        raise ValueError(f"Invalid characters found in 'reply': {', '.join(set(invalid_chars))}. Only Arabic characters and common punctuation are allowed.")
+        raise ValueError(f"Invalid characters found in 'reply': {', '.join(set(invalid_chars))}\nOnly Arabic characters and common punctuation are allowed.")
 
+    # Successful processing log
+    logger.info(f"Processed input successfully: {prompt.strip()}, {reply.strip()}")
+    
     processed_input = {'prompt': prompt.strip(), 'reply': reply.strip()}
     return processed_input

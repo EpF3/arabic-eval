@@ -10,14 +10,11 @@ load_dotenv()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_FILE = os.path.join(BASE_DIR, 'app.log')
 
-# Logging config
+# Logging config (File logging only)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s || %(levelname)s || %(message)s',
-    handlers=[
-        logging.FileHandler(LOG_FILE),
-        logging.StreamHandler()
-    ]
+    handlers=[logging.FileHandler(LOG_FILE, encoding='utf-8')]
 )
 
 logger = logging.getLogger('arabic-eval')
