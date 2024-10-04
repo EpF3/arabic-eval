@@ -34,8 +34,9 @@ def process_input(arabic_input: Dict) -> Dict:
         raise ValueError("Reply cannot be empty.")
 
     # Step 4: Arabic Text Check
-    if not re.fullmatch(r'^[\u0600-\u06FF\s،؛؟.!(){}[\]\'\"0-9]+$', reply):
-        raise ValueError("Reply must contain valid Arabic characters only.")
+    invalid_chars = re.findall(r'[^\\u0600-\\u06FF\\s،؛؟.!(){}[\\]\'\"0-9]', reply)
+    if invalid_chars:
+        raise ValueError(f"Invalid characters found in 'reply': {', '.join(set(invalid_chars))}. Only Arabic characters and common punctuation are allowed.")
 
     processed_input = {'prompt': prompt.strip(), 'reply': reply.strip()}
     return processed_input
