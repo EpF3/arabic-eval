@@ -19,7 +19,7 @@ The architecture consists of several layers that interact with each other to eva
    - **Key Task**: Tokenize the input using appropriate methods for Arabic text without altering the original content.
 
 #### 3. Evaluation Metrics Layer
-   - **Description**: This layer is composed of various modules to assess the text based on defined metrics across different levels (character, token, word, clause, sentence, paragraph, response, and prompt + reply).
+   - **Description**: This layer is composed of various modules to assess the text based on defined metrics across different levels (character, token, word, clause, sentence, paragraph, response, and I/O).
    - **Functionality**: Each module will evaluate the raw text according to specific criteria, which include fluency, coherence, and relevance, without any prior normalization of the output.
 
    - **Evaluation Levels**:
@@ -28,7 +28,7 @@ The architecture consists of several layers that interact with each other to eva
      - **Sentence Level**: Evaluate grammar, fluency, and verbosity.
      - **Paragraph Level**: Assess coherence, entity consistency, readability, and richness.
      - **Response Level**: Evaluate structure, presentation, cohesion, and time.
-     - **Prompt + Reply Level**: Assess relevance, completeness, cost, and adherence.
+     - **I/O Level**: Assess relevance, completeness, cost, and adherence.
 
 #### 4. Penalty System
    - **Description**: A level-wise component that calculates penalties based on evaluation results.
@@ -85,17 +85,11 @@ To handle raw input in the form of a simple JSON object containing a prompt and 
 ### Pseudocode:
 ```sql
 FUNCTION process_input(raw_input):
-
     VERIFY the input is in the correct structured format
-
     EXTRACT the 'prompt' and 'reply' from the input
-
     ENSURE both the 'prompt' and 'reply' are non-empty text values
-
     VALIDATE that the 'reply' contains Arabic text
-
     CHECK that the text encoding is appropriate for processing
-
     RETURN the 'prompt' and 'reply' for further use
 ```
 ---
@@ -115,7 +109,7 @@ The layer is structured to perform evaluations asynchronously, allowing multiple
 
 ### Evaluation Levels
 Each evaluation function will operate independently, allowing for modular evaluations:
-- **Prompt + Reply**: Validates and evaluates the overall relevance and completeness of the interaction.
+- **I/O**: Validates and evaluates the overall relevance and completeness of the interaction.
 - **Response**: Assesses the generated reply for quality metrics.
 - **Paragraph**: Assesses the coherence and readability of individual text blocks.
 - **Sentence**: Evaluates individual sentences for grammatical correctness and fluency.
@@ -139,7 +133,6 @@ FUNCTION evaluate_paragraphs(response):
     FOR each paragraph in the divided response:
         COLLECT metrics by evaluating the paragraph
         AGGREGATE metrics for final analysis
-
     COMPUTE average metrics from aggregated results
     STORE the average metrics in the database
 
@@ -148,7 +141,6 @@ FUNCTION evaluate_sentences(paragraph):
     FOR each sentence in the divided paragraph:
         COLLECT metrics by evaluating the sentence
         AGGREGATE metrics for final analysis
-
     COMPUTE average metrics from aggregated results
     STORE the average metrics in the database
 
@@ -157,7 +149,6 @@ FUNCTION evaluate_words(sentence):
     FOR each word in the divided sentence:
         COLLECT metrics by evaluating the word
         AGGREGATE metrics for final analysis
-
     COMPUTE average metrics from aggregated results
     STORE the average metrics in the database
 
@@ -166,14 +157,9 @@ FUNCTION evaluate_characters(word):
     FOR each character in the divided word:
         COLLECT metrics by evaluating the character
         AGGREGATE metrics for final analysis
-
     COMPUTE average metrics from aggregated results
     STORE the average metrics in the database
 ```
-
-### Final Notes
-The asynchronous nature of the Evaluation Layer allows for efficient and quick assessments of text quality, while proper error handling ensures that the system remains robust and resilient against evaluation failures.
-
 ---
 
 ## Evaluation Metrics: I/O Level
@@ -259,11 +245,7 @@ FUNCTION calculate_cost(input_cost, output_cost):
     CALCULATE total cost by summing input cost and output cost
     LOG cost data for future reference
     RETURN total cost
-
-FUNCTION log_cost_data(input_cost, output_cost, total_cost):
-    RECORD input cost, output cost, and total cost in logs
 ```
----
 
 ### 4. Adherence  
 *This metric evaluates the response's compliance with user instructions and system guidelines, ensuring it aligns with expected standards while resisting manipulative attempts.*  
@@ -283,27 +265,23 @@ To assess the system's capability to follow predefined guidelines and effectivel
 
 #### Pseudocode:  
 ```sql
-FUNCTION calculate_adherence(prompt, reply, guidelines):
-    injection_patterns = extract_injection_patterns(guidelines)
-
-    IF contains_injection(reply, injection_patterns):
-        RETURN 0.0  # No adherence due to prompt injection
-
+FUNCTION calculate_adherence(reply, guidelines):
     adherence_score = evaluate_guideline_compliance(reply, guidelines)
-    RETURN adherence_score  # Score between 0 (non-compliant) and 1 (fully compliant)
-
-FUNCTION extract_injection_patterns(guidelines):
-    RETURN create_patterns_based_on(guidelines)  # Generate patterns that signify injection attempts
-
-FUNCTION contains_injection(reply, injection_patterns):
-    FOR each pattern IN injection_patterns:
-        IF pattern detected in reply:
-            RETURN True  # Injection detected
-    RETURN False  # No injection found
+    RETURN adherence_score  # 0-1
 
 FUNCTION evaluate_guideline_compliance(reply, guidelines):
     compliance_score = compare_reply_with_guidelines(reply, guidelines)
-    RETURN compliance_score  # Normalize to a scale from 0 to 1
+    RETURN compliance_score # 0-1
+
+FUNCTION compare_reply_with_guidelines(reply, guidelines):
+    total_guidelines = COUNT(guidelines)
+    compliance_count = 0
+    FOR each guideline IN guidelines:
+        IF reply SATISFIES guideline:
+            compliance_count = compliance_count + 1
+    raw_score = compliance_count / total_guidelines
+    normalized_score = score / MAX_SCORE
+    RETURN normalized_score
 ```
 --- 
 
@@ -348,7 +326,7 @@ FUNCTION check_topic_sentences(paragraphs):
     FOR each paragraph IN paragraphs:
         IF first sentence is a topic sentence:
             INCREMENT topic_sentence_count
-    RETURN ratio of topic sentences to total paragraphs
+    RETURN topic sentences / total paragraphs
 
 FUNCTION is_topic_sentence(sentence):
     RETURN sentence_meets_criteria(sentence)
@@ -374,14 +352,12 @@ To assess how well the response engages the user through its tone and presentati
 FUNCTION evaluate_presentation(reply):
     DETERMINE tone score using tone analysis
     MEASURE engagement score of the reply
-
     CALCULATE presentation score by averaging tone and engagement scores
     RETURN presentation score
 
 FUNCTION analyze_tone(reply):
     SPLIT reply into sentences
     COUNT positive sentences
-    
     CALCULATE tone score based on positive sentences
     RETURN tone score
 
@@ -417,22 +393,11 @@ FUNCTION evaluate_cohesion(reply):
     SPLIT reply into sentences
     CREATE pairs of consecutive sentences
     semantic_similarity_sum = 0
-
     FOR each pair of sentences:
         CALCULATE semantic similarity between the pair
         ADD similarity to semantic_similarity_sum
-    
     CALCULATE cohesion score as the average similarity
     RETURN cohesion score
-
-FUNCTION split_into_sentences(reply):
-    RETURN reply.split(". ")
-
-FUNCTION create_sentence_pairs(sentences):
-    pairs = []
-    FOR i IN range(0, len(sentences) - 1):
-        ADD (sentences[i], sentences[i + 1]) to pairs
-    RETURN pairs
 
 FUNCTION calculate_semantic_similarity(sentence1, sentence2):
     GET embeddings for both sentences
@@ -474,8 +439,6 @@ FUNCTION calculate_time_score(response_time):
 ### Description
 This section focuses on the evaluation of paragraphs generated by the system. The metrics assessed at this level include coherence, entity consistency, readability, and richness. These metrics ensure that the generated paragraphs are logically structured, maintain consistency in entities, are readable, and provide lexical richness.
 
----
-
 ### 1. Coherence
 *This metric evaluates the logical flow within and between paragraphs, ensuring smooth transitions between ideas and semantic unity across the paragraphs.*
 
@@ -500,7 +463,6 @@ FUNCTION evaluate_coherence(paragraphs):
         CALCULATE cosine similarity between paragraph vectors
     RETURN average similarity score across all pairs
 ```
----
 
 ### 2. Entity Consistency
 *This metric checks for consistency of entities (such as names, locations, or other important nouns) across paragraphs to avoid contradictions and ensure uniformity in the narrative.*
@@ -551,7 +513,6 @@ FUNCTION evaluate_readability(paragraphs):
         CALCULATE sentence length and complexity using readability formulas
     RETURN average readability score across all paragraphs
 ```
----
 
 ### 4. Richness
 *This metric evaluates the lexical diversity and the density of information in each paragraph, ensuring varied and non-repetitive vocabulary.*
@@ -682,7 +643,6 @@ FUNCTION evaluate_syntax(words):
         CHECK for syntax errors (e.g., concatenation, hyphenation, compound word formation)
     RETURN total syntax error count and average score
 ```
----
 
 ### 2. Grammar
 *This metric evaluates the grammatical form of each word, focusing on correct gender, number, and tense usage.*
@@ -704,10 +664,9 @@ To ensure that each word is used in the correct grammatical form, accounting for
 FUNCTION evaluate_grammar(words):
     FOR each word:
         EXTRACT grammatical properties (e.g., gender, number, tense)
-        CHECK if the word's form fits the sentence context
+        CHECK if the word form fits the sentence context
     RETURN total grammatical error count and average score
 ```
----
 
 ### 3. Part of Speech
 *This metric evaluates whether the word is used in the correct part of speech within the sentence (e.g., noun, verb, adjective).*
@@ -732,7 +691,6 @@ FUNCTION evaluate_pos(words):
         CHECK if the word's part of speech is correct for the sentence
     RETURN total part of speech error count and average score
 ```
----
 
 ### 4. Semantics
 *This metric evaluates the meaning of the word in the sentence, ensuring that it conveys the intended message without ambiguity or incorrect usage.*

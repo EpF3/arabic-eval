@@ -1,11 +1,12 @@
 ''' Entry point for the program'''
 from input_handler import process_input
 
-def main() -> None:
-    input_data = {
+input_data = {
     "prompt": "كيف حالك؟ What do you think?",
-    "reply": "أنا بخير، شكرا! I'm fine, thank you!"
+    "reply": "كيف حالك"
     }
+
+def main() -> None:
     try:
         output_data = process_input(input_data)
         print("Prompt:", output_data['prompt'])
