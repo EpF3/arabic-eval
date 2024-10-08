@@ -1,15 +1,29 @@
 '''Response Metrics'''
 
-async def evaluate_response(reply, time):
+def evaluate_response(reply, time) -> dict[str, float]:
     """Evaluate response metrics"""
-    structure = evaluate_structure(reply)
-    presentation = evaluate_presentation(reply)
-    cohesion = evaluate_cohesion(reply)
-    time_score = evaluate_time_score(time)
+    structure = evaluate_structure()
+    presentation = evaluate_presentation()
+    cohesion = evaluate_cohesion()
     response_level_metrics = {
         'structure': structure,
         'presentation': presentation,
         'cohesion': cohesion,
-        'time_score': time_score
+        'time': time
     }
     return response_level_metrics
+
+def evaluate_structure() -> float:
+    """Evaluate structure"""
+    structure = 0.5
+    return structure
+
+def evaluate_presentation() -> float:
+    """Evaluate presentation"""
+    presentation = 0.5
+    return presentation
+
+def evaluate_cohesion() -> float:
+    """Evaluate cohesion"""
+    cohesion = 0.5
+    return cohesion

@@ -1,11 +1,11 @@
 '''I/O Metrics'''
 
-async def evaluate_io(prompt, reply):
+def evaluate_io(prompt, reply) -> dict[str, float]:
     """Evaluate I/O metrics"""
-    relevance = evaluate_relevance(prompt, reply)
-    completeness = evaluate_completeness(prompt, reply)
-    cost = evaluate_cost(prompt, reply)
-    adherance = evaluate_adherance(reply, GUIDELINES)
+    relevance = evaluate_relevance()
+    completeness = evaluate_completeness()
+    cost = evaluate_cost()
+    adherance = evaluate_adherance()
     io_level_metrics = {
         'relevance': relevance,
         'completeness': completeness,
@@ -13,3 +13,23 @@ async def evaluate_io(prompt, reply):
         'adherance': adherance
     }
     return io_level_metrics
+
+def evaluate_relevance() -> float:
+    """Evaluate relevance"""
+    relevance = 0.5
+    return relevance
+
+def evaluate_completeness() -> float:
+    """Evaluate completeness"""
+    completeness = 0.5
+    return completeness
+
+def evaluate_adherance() -> float:
+    """Evaluate adherance"""
+    adherance = 0.5
+    return adherance
+
+def evaluate_cost() -> float:
+    """Evaluate cost"""
+    cost = 0.5
+    return cost
