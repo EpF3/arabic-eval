@@ -37,7 +37,8 @@ def process_input(arabic_input: Dict) -> Dict[str, str]:
     # Step 4: Arabic Text Check
     invalid_chars = re.findall(r'[^\u0600-\u06FF\s،؛؟.!(){}\[\]\'\"0-9:ــ،ـ،«»⁜«»—ـ•⸘⸙؞]', reply)
     if invalid_chars:
-        raise ValueError(f"Invalid characters found in 'reply': {', '.join(set(invalid_chars))}\nOnly Arabic characters and common punctuation are allowed.")
+        raise ValueError(f"Invalid characters found in 'reply': {', '.join(set(invalid_chars))}" +
+                         f"\nOnly Arabic characters and common punctuation are allowed.")
 
     # Successful processing log
     logger.info(f"Processed input successfully: {prompt.strip()}, {reply.strip()}")
