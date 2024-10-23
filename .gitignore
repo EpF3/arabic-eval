@@ -15,3 +15,6 @@ env/
 
 # Logs
 *.log
+
+# Manual Installation Files
+downloads/
