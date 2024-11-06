@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 # Env vars
 load_dotenv()
+COST_PER_PROMPT_TOKEN = os.getenv("COST_PER_PROMPT_TOKEN")
+COST_PER_REPLY_TOKEN = os.getenv("COST_PER_REPLY_TOKEN")
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

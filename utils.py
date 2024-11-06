@@ -40,3 +40,7 @@ def split_into_sentences(text: str) -> list[str]:
     polyglot_text = Text(text, hint_language_code='ar')
     sentences = [sent.string for sent in polyglot_text.sentences]
     return sentences
+
+def count_tokens(text: str) -> int:
+    """Counts the number of tokens in a body of text"""
+    return 1

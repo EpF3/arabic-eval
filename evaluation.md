@@ -118,7 +118,7 @@ Each evaluation function will operate independently, allowing for modular evalua
 
 ### Pseudocode
 ```sql
-FUNCTION evaluate_prompt_reply(reply, context):
+FUNCTION evaluate_io(prompt, reply):
     PROCESS the reply using the specified context of the prompt
     GATHER evaluation metrics from the processed reply
     STORE the results in the database
@@ -852,7 +852,7 @@ FUNCTION generate_output_report(evaluation_results):
 
     INITIALIZE an empty report
 
-    FOR each evaluation layer (character, token, word, sentence, paragraph, response, prompt_reply):
+    FOR each evaluation layer (character, token, word, sentence, paragraph, response, io):
         START asynchronous process to retrieve and compute results from the corresponding evaluation module
         STORE the process handle (future) for each layer
 
