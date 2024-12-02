@@ -1,7 +1,5 @@
 '''Sentence Metrics'''
-
 from utils import split_into_sentences
-
 
 def evaluate_sentences(reply: str) -> dict[str, float]:
     """Evaluate paragraph metrics"""
@@ -18,6 +16,11 @@ def evaluate_sentences(reply: str) -> dict[str, float]:
 
 def evaluate_grammar(sentences: list[str]) -> float:
     """Evaluate grammar"""
+    grammar_scores = []
+    for sentence in sentences:
+        tmp = sentence
+        grammar_scores.append(tmp)
+    # grammar = avg(grammar_scores)
     grammar = 0.5
     return grammar
 

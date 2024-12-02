@@ -5,9 +5,9 @@ from utils import count_tokens
 def evaluate_io(prompt: str, reply: str) -> dict[str, float]:
     """Evaluate I/O metrics"""
     relevance = evaluate_relevance(prompt, reply)
-    completeness = evaluate_completeness()
-    cost = evaluate_cost()
-    adherance = evaluate_adherance()
+    completeness = evaluate_completeness(prompt, reply)
+    cost = evaluate_cost(prompt, reply)
+    adherance = evaluate_adherance(prompt, reply)
     io_level_metrics = {
         'relevance': relevance,
         'completeness': completeness,
